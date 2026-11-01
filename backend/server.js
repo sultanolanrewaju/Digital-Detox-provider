@@ -119,7 +119,7 @@ app.post('/api/send', async (req, res) => {
 });
 
 // Web Route to view crisp, scannable QR code on your phone/browser
-app.get('/qr', async (req, res) => {
+app.get('/', async (req, res) => {
     if (!latestQR) {
         return res.send(`
             <div style="text-align:center; margin-top:50px; font-family:sans-serif;">
