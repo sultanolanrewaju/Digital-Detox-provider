@@ -42,10 +42,12 @@ async function startWhatsApp() {
         const { connection, lastDisconnect, qr } = update;
 
         if (qr) {
-            latestQR = qr;
-            console.log('\n--- QR RECEIVED. VIEW IT AT: https://<your-render-url>/qr ---\n');
-            qrcodeTerminal.generate(qr, { small: true });
-        }
+    latestQR = qr;
+    io.emit('qr', qr); // <-- Broadcasts the QR string directly to React frontend
+    console.log('\n--- QR RECEIVED --- \n');
+}
+
+
 
         if (connection === 'close') {
             const statusCode = (lastDisconnect?.error instanceof Boom)?.output?.statusCode;
@@ -55,11 +57,10 @@ async function startWhatsApp() {
                 startWhatsApp();
             }
         } else if (connection === 'open') {
-            latestQR = ''; // Clear QR once successfully linked
-            console.log('\n================================================');
-            console.log(' SUCCESS! Connected to WhatsApp cleanly.');
-            console.log('================================================\n');
-        }
+    latestQR = '';
+    io.emit('whatsapp_ready'); // <-- Tells React frontend we are logged in
+    console.log('SUCCESS! Connected to WhatsApp.');
+}
     });
 
     // Handle Incoming Messages & Pipe to Frontend via Socket.io
